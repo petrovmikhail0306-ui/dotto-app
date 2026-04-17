@@ -4,26 +4,19 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(date -u +'%Y%m%d')" >> $GITHUB_OUTPUT
-        shell: bash
+      - uses: actions/checkout@v4
 
       - name: Build with Buildozer
-        uses: ArtemSerebriakov/buildozer-action@v1
-        id: buildozer
+        uses: ArtemSerebrennikov/buildozer-action@v1
         with:
           buildozer_version: master
-          command: buildozer android debug
+          command: android debug
+          buildozer_config: buildozer.spec
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: dotto-app-debug-${{ steps.get-date.outputs.date }}
+          name: dotto-app
           path: bin/*.apk
