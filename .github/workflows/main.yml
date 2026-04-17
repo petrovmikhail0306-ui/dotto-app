@@ -1,22 +1,27 @@
 
-name: Build APK
+ name: Build APK
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+          pip install --upgrade pip
+          pip install buildozer cython==0.29.33 kivy
+
       - name: Build with Buildozer
-        uses: ArtemSerebrennikov/buildozer-action@v1
-        with:
-          buildozer_version: master
-          command: android debug
-          buildozer_config: buildozer.spec
+        run: |
+          yes | buildozer android debug
+        shell: bash
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: dotto-app
-          path: bin/*.apk
+          name: Dotto-App
+        
